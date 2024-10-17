@@ -1,27 +1,28 @@
 "use client";
 
-import { useState, useEffect } from 'react';
-import PokemonCard from './components/PokemonCard';
+import { useState, useEffect } from "react";
+import PokemonCard from "./components/PokemonCard";
+import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/outline";
 
 export default function Home() {
   const [pokemonList, setPokemonList] = useState([]);
   const [filteredPokemon, setFilteredPokemon] = useState([]);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [types, setTypes] = useState([]);
-  const [selectedType, setSelectedType] = useState('');
+  const [selectedType, setSelectedType] = useState("");
   const [currentPage, setCurrentPage] = useState(1); // For pagination
   const [pokemonPerPage] = useState(20); // Show 20 Pokémon per page
 
   // Fetch Pokémon data and types
   useEffect(() => {
-    fetch('https://pokeapi.co/api/v2/pokemon?limit=150')
+    fetch("https://pokeapi.co/api/v2/pokemon?limit=150")
       .then((res) => res.json())
       .then((data) => {
         setPokemonList(data.results);
         setFilteredPokemon(data.results);
       });
 
-    fetch('https://pokeapi.co/api/v2/type')
+    fetch("https://pokeapi.co/api/v2/type")
       .then((res) => res.json())
       .then((data) => setTypes(data.results));
   }, []);
@@ -62,21 +63,21 @@ export default function Home() {
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-3xl font-bold mb-6">Pokémon Search</h1>
+      <h1 className="text-3xl font-bold mb-6 text-center">Pokémon Search</h1>
 
-      <div className="mb-4">
+      <div className="mb-4 flex flex-col sm:flex-row items-center">
         <input
           type="text"
           placeholder="Search Pokémon..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="border rounded p-2 mr-2"
+          className="border rounded p-2 mr-2 mb-2 sm:mb-0 sm:w-1/3 text-black"
         />
 
         <select
           onChange={(e) => setSelectedType(e.target.value)}
           value={selectedType}
-          className="border rounded p-2 text-black"
+          className="border rounded p-2 text-black sm:w-1/3"
         >
           <option value="">All Types</option>
           {types.map((type) => (
@@ -90,7 +91,6 @@ export default function Home() {
       {/* Check if no Pokémon data is found */}
       {currentPokemon.length === 0 ? (
         <div className="text-center">
-         
           <p className="text-xl font-bold mt-4">No Pokémon data found</p>
         </div>
       ) : (
@@ -103,29 +103,32 @@ export default function Home() {
           </div>
 
           {/* Pagination Controls */}
-          <div className="flex justify-center mt-6">
+          <div className="flex justify-center mt-6 space-x-2">
             <button
               onClick={() => paginate(currentPage - 1)}
               disabled={currentPage === 1}
-              className="border p-2 mx-1"
+              className="border p-2 rounded-full disabled:opacity-50"
             >
-              Previous
+              <ChevronLeftIcon className="h-5 w-5" />
             </button>
+
+            {/* Pagination Number Buttons */}
             {[...Array(totalPages).keys()].map((number) => (
               <button
                 key={number + 1}
                 onClick={() => paginate(number + 1)}
-                className={`border p-2 mx-1 ${currentPage === number + 1 ? 'bg-gray-300' : ''}`}
+                className={`border p-1 rounded ${currentPage === number + 1 ? "bg-gray-300" : ""}`}
               >
                 {number + 1}
               </button>
             ))}
+
             <button
               onClick={() => paginate(currentPage + 1)}
               disabled={currentPage === totalPages}
-              className="border p-2 mx-1"
+              className="border p-2 rounded-full disabled:opacity-50"
             >
-              Next
+              <ChevronRightIcon className="h-5 w-5" />
             </button>
           </div>
         </>
@@ -133,5 +136,3 @@ export default function Home() {
     </div>
   );
 }
-
-
